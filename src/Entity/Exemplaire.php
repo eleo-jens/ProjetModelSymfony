@@ -21,6 +21,9 @@ class Exemplaire
     #[ORM\OneToMany(mappedBy: 'exemplaireEmprunte', targetEntity: Emprunt::class)]
     private Collection $emprunts;
 
+    #[ORM\ManyToOne(inversedBy: 'exemplaires')]
+    private ?Livre $livre = null;
+
     public function __construct()
     {
         $this->emprunts = new ArrayCollection();
@@ -69,6 +72,18 @@ class Exemplaire
                 $emprunt->setExemplaireEmprunte(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLivre(): ?Livre
+    {
+        return $this->livre;
+    }
+
+    public function setLivre(?Livre $livre): self
+    {
+        $this->livre = $livre;
 
         return $this;
     }
