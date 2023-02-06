@@ -3,7 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AeroportRepository;
-use Doctrine\DBAL\Types\Types;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AeroportRepository::class)]
@@ -14,24 +15,39 @@ class Aeroport
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $nom = null;
+
     #[ORM\Column(length: 5, nullable: true)]
     private ?string $code = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $dateDepart = null;
+    #[ORM\OneToMany(mappedBy: 'aeroportDepart', targetEntity: Vol::class)]
+    private Collection $volsDepart;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $heureDepart = null;
+    #[ORM\OneToMany(mappedBy: 'aeroportArrivee', targetEntity: Vol::class)]
+    private Collection $volsArrivee;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $dateArrivee = null;
-
-    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $heureArrivee = null;
+    public function __construct()
+    {
+        $this->volsDepart = new ArrayCollection();
+        $this->volsArrivee = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(?string $nom): self
+    {
+        $this->nom = $nom;
+
+        return $this;
     }
 
     public function getCode(): ?string
@@ -46,50 +62,62 @@ class Aeroport
         return $this;
     }
 
-    public function getDateDepart(): ?\DateTimeInterface
+    /**
+     * @return Collection<int, Vol>
+     */
+    public function getVolsDepart(): Collection
     {
-        return $this->dateDepart;
+        return $this->volsDepart;
     }
 
-    public function setDateDepart(?\DateTimeInterface $dateDepart): self
+    public function addVolDepart(Vol $volDepart): self
     {
-        $this->dateDepart = $dateDepart;
+        if (!$this->volsDepart->contains($volDepart)) {
+            $this->volsDepart->add($volDepart);
+            $volDepart->setAeroportDepart($this);
+        }
 
         return $this;
     }
 
-    public function getHeureDepart(): ?\DateTimeInterface
+    public function removeVolDepart(Vol $volDepart): self
     {
-        return $this->heureDepart;
-    }
-
-    public function setHeureDepart(?\DateTimeInterface $heureDepart): self
-    {
-        $this->heureDepart = $heureDepart;
+        if ($this->volsDepart->removeElement($volDepart)) {
+            // set the owning side to null (unless already changed)
+            if ($volDepart->getAeroportDepart() === $this) {
+                $volDepart->setAeroportDepart(null);
+            }
+        }
 
         return $this;
     }
 
-    public function getDateArrivee(): ?\DateTimeInterface
+    /**
+     * @return Collection<int, Vol>
+     */
+    public function getVolsArrivee(): Collection
     {
-        return $this->dateArrivee;
+        return $this->volsArrivee;
     }
 
-    public function setDateArrivee(?\DateTimeInterface $dateArrivee): self
+    public function addVolArrivee(Vol $volArrivee): self
     {
-        $this->dateArrivee = $dateArrivee;
+        if (!$this->volsArrivee->contains($volArrivee)) {
+            $this->volsArrivee->add($volArrivee);
+            $volArrivee->setAeroportArrivee($this);
+        }
 
         return $this;
     }
 
-    public function getHeureArrivee(): ?\DateTimeInterface
+    public function removeVolArrivee(Vol $volArrivee): self
     {
-        return $this->heureArrivee;
-    }
-
-    public function setHeureArrivee(?\DateTimeInterface $heureArrivee): self
-    {
-        $this->heureArrivee = $heureArrivee;
+        if ($this->volsArrivee->removeElement($volArrivee)) {
+            // set the owning side to null (unless already changed)
+            if ($volArrivee->getAeroportArrivee() === $this) {
+                $volArrivee->setAeroportArrivee(null);
+            }
+        }
 
         return $this;
     }

@@ -28,9 +28,13 @@ class Eleve
     #[ORM\OneToMany(mappedBy: 'eleve', targetEntity: Inscription::class, orphanRemoval: true)]
     private Collection $inscriptions;
 
+    #[ORM\ManyToMany(targetEntity: Hobby::class, mappedBy: 'eleves')]
+    private Collection $hobbies;
+
     public function __construct()
     {
         $this->inscriptions = new ArrayCollection();
+        $this->hobbies = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -99,6 +103,33 @@ class Eleve
             if ($inscription->getEleve() === $this) {
                 $inscription->setEleve(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Hobby>
+     */
+    public function getHobbies(): Collection
+    {
+        return $this->hobbies;
+    }
+
+    public function addHobby(Hobby $hobby): self
+    {
+        if (!$this->hobbies->contains($hobby)) {
+            $this->hobbies->add($hobby);
+            $hobby->addElefe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHobby(Hobby $hobby): self
+    {
+        if ($this->hobbies->removeElement($hobby)) {
+            $hobby->removeElefe($this);
         }
 
         return $this;
