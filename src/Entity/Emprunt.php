@@ -23,6 +23,9 @@ class Emprunt
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $commentaires = null;
 
+    #[ORM\ManyToOne(inversedBy: 'emprunts')]
+    private ?Client $emprunteur = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,6 +63,18 @@ class Emprunt
     public function setCommentaires(?string $commentaires): self
     {
         $this->commentaires = $commentaires;
+
+        return $this;
+    }
+
+    public function getEmprunteur(): ?Client
+    {
+        return $this->emprunteur;
+    }
+
+    public function setEmprunteur(?Client $emprunteur): self
+    {
+        $this->emprunteur = $emprunteur;
 
         return $this;
     }
