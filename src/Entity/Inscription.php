@@ -24,6 +24,20 @@ class Inscription
     #[ORM\JoinColumn(nullable: false)]
     private ?Eleve $eleve = null;
 
+    public function __construct(array $vals = [])
+    {
+        $this->hydrate($vals);
+    }
+
+    public function hydrate (array $vals = []){
+        foreach ($vals as $key=> $val){
+            $method = "set" . ucfirst($key); 
+            if (method_exists($this,$method)){
+                $this->$method ($val);
+            }
+        }
+    }
+
     public function getId(): ?int
     {
         return $this->id;

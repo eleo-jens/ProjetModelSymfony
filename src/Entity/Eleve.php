@@ -25,16 +25,26 @@ class Eleve
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $dateNaissance = null;
 
-    #[ORM\OneToMany(mappedBy: 'eleve', targetEntity: Inscription::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'eleve', targetEntity: Inscription::class, orphanRemoval: true, cascade : ['persist'])]
     private Collection $inscriptions;
 
     #[ORM\ManyToMany(targetEntity: Hobby::class, mappedBy: 'eleves')]
     private Collection $hobbies;
 
-    public function __construct()
+    public function __construct(array $vals = [])
     {
+        $this->hydrate($vals);
         $this->inscriptions = new ArrayCollection();
         $this->hobbies = new ArrayCollection();
+    }
+
+    public function hydrate (array $vals = []){
+        foreach ($vals as $key=> $val){
+            $method = "set" . ucfirst($key); 
+            if (method_exists($this,$method)){
+                $this->$method ($val);
+            }
+        }
     }
 
     public function getId(): ?int

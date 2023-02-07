@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+Le résultat de votre recherche avec l'id {{ id }} est:
+
+{% if eleve == null %}
+<p>Pas de résultat trouvé</p>
+{% elseif eleve %}
+Voici l'élève: 
+<p>Prenom: {{eleve.prenom}}</p>
+<p>Nom: {{eleve.nom}}</p>
+{% endif %}
+
+{% endblock %}

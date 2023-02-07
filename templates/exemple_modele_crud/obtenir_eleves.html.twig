@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+On affiche les élèves
+{# {{ dump (arrayEleves) }} #}
+
+{% for eleve in arrayEleves %}
+<br>
+{{ message }}
+<br>
+Nom: {{ eleve.getNom }} <br>
+Prénom: {{ eleve.prenom }}
+{%endfor%}
+
+{% endblock %}
